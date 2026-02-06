@@ -37,7 +37,7 @@ public class RequestParamServlet extends HttpServlet {
         for (String name : userNames) {
             System.out.println("name = " + name);
         }
-        System.out.println();
+        System.out.println("test");
 
         response.getWriter().write("ok");
     }
