@@ -65,6 +65,6 @@ public class FrontControllerServletV3 extends HttpServlet {
     }
 
     private MyView viewResolver(String viewName) {
-        return new MyView("/WEB-INF/views" + viewName + ".jsp"); // 물리 이름으로 만들어버림.
+        return new MyView("/WEB-INF/views/" + viewName + ".jsp"); // 물리 이름으로 만들어버림.
     }
 }
