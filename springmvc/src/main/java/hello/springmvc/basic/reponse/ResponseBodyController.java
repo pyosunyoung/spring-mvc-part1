@@ -45,7 +45,7 @@ public class ResponseBodyController {
 
     }
 
-    @ResponseStatus(HttpStatus.OK) //이렇게 여기서 annotaiton을 통해 status 지정 가능.
+    @ResponseStatus(HttpStatus.OK) //이렇게 여기서 annotaiton을 통해 status 지정 가능..
 //    @ResponseBody
     @GetMapping("/response-body-json-v2")
     public HelloData responseBodyJsonV2() {

@@ -21,7 +21,7 @@ public class ResponseViewController {
         return "response/hello";
     }
 
-    @RequestMapping("/response/hello") // 경로의 이름과 return값이 동일하면 생략 가능 근데 이건 가독성 저하
+    @RequestMapping("/response/hello") // 경로의 이름과 return값이 동일하면 생략 가능 근데 이건 가독성 저하.
     public void responseViewV3(Model model) {
         model.addAttribute("data", "Hello World");
     }
