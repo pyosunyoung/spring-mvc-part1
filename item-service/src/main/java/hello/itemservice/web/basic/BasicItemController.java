@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class BasicItemController {
      * model.addAttribute(item); 자동 추가, 생략 가능
      * 생략시 model에 저장되는 name은 클래스명 첫글자만 소문자로 등록 Item -> item
      */
-    @PostMapping("/add")
+//    @PostMapping("/add")
     public String addItemV3(@ModelAttribute Item item) { //Item -> item 소문자로 바꿔서 명시 또한 생략 가능.
         itemRepository.save(item);
         return "basic/item";
@@ -87,16 +88,54 @@ public class BasicItemController {
      * @ModelAttribute 자체 생략 가능
      * model.addAttribute(item) 자동 추가
      */
-    @PostMapping("/add") // 이거까지 줄이는 것은 좀 애매함.
-    public String addItemV4(Item item) {
+//    @PostMapping("/add") // 이거까지 줄이는 것은 좀 애매함.
+//    public String addItemV4(Item item) {
+//        itemRepository.save(item);
+//        return "basic/item"; // 이건 새로 고침시 post/add로 요청됨. 그래서 계속 아이템이 생성됨.
+//    } // 새로고침은 마지막에 전송한 데이터를 다시 전송하는 것.
+
+    //PRG 패턴으로 위 오류 해결, POST -> REDIRECT -> GET
+//    @PostMapping("/add") //
+    public String addItemV5(Item item) {
         itemRepository.save(item);
-        return "basic/item";
+        return "redirect:/basic/items" + item.getId(); // 상품 상세로 이동, 새로 고침해도 get으로 요청
     }
+
+    @PostMapping("/add") // 이거까지 줄이는 것은 좀 애매함.
+    public String addItemV6(Item item, RedirectAttributes redirectAttributes) {
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId()); // 이렇게 하면 Id값을 url 인코딩 가능
+        redirectAttributes.addAttribute("status", true); // url 쿼리 파라미터로 등러감
+        return "redirect:/basic/items/{itemId}";
+    }
+//    RedirectAttributes를 사용하면 URL 인코딩도 해주고, pathVariable, , 쿼리 파라미터까지 처리해준다.
+//
+//    redirect:/basic/items/{itemId}
+//
+//    pathVariable 바인딩: {itemId}
+//
+//    나머지는 쿼리 파라미터로 처리: ?status=true
+
 
 
     /**
      *  테스트용 데이터 추가
      */
+
+    @GetMapping("/{itemId}/edit")
+    public String editForm(@PathVariable Long  itemId, Model model) {
+        Item item = itemRepository.findById(itemId);
+        model.addAttribute("item", item);
+        return "basic/editForm";
+    }
+
+
+
+    @PostMapping("/{itemId}/edit")
+    public String edit(@PathVariable Long  itemId, @ModelAttribute Item item) {
+        itemRepository.update(itemId, item);
+        return "redirect:/basic/items/{itemId}";
+    }
 
     @PostConstruct
     public void init() {
